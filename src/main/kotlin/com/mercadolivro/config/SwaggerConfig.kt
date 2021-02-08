@@ -19,6 +19,7 @@ class SwaggerConfig {
         .apis(RequestHandlerSelectors.any())
         .paths(PathSelectors.any())
         .build()
+
         .apiInfo(ApiInfo("Mercado Livro",
             "Api do Mercado Livro",
             null,
