@@ -1,5 +1,5 @@
-CREATE TABLE usuario (
+CREATE TABLE customer (
     id int AUTO_INCREMENT PRIMARY KEY,
-    nome varchar(255) not null,
+    name varchar(255) not null,
     email varchar(255) not null
 );
