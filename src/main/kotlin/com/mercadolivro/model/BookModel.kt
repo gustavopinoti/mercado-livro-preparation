@@ -8,7 +8,7 @@ import javax.persistence.*
 data class BookModel(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Int? = null,
 
     @Column
@@ -18,11 +18,8 @@ data class BookModel(
     var price: BigDecimal,
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
+    @JoinColumn(name = "customer_id")
     var customer: CustomerModel? = null,
-
-    @Column(name = "customer_id")
-    var customerId: Int? = null,
 
     @Column(name = "is_active")
     var isActive: Boolean = true

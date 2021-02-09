@@ -5,5 +5,5 @@ import com.mercadolivro.model.CustomerModel
 import org.springframework.data.repository.CrudRepository
 
 interface BookRepository: CrudRepository<BookModel, Int> {
-
+    fun findByIsActive(isActive: Boolean): List<BookModel>
 }

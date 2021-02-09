@@ -28,13 +28,20 @@ class BookService(
     }
 
     fun update(book: BookModel) {
-        if (!bookRepository.existsById(book.id!!)) {
+        val bookSaved = bookRepository.findById(book.id!!)
+
+        if (bookSaved.isEmpty) {
             throw BadRequestException("Book [${book.id}] Not Exists")
         }
+
+        book.customer = bookSaved.get().customer
 
         bookRepository.save(book)
     }
 
+    fun findActives(): List<BookModel> {
+        return bookRepository.findByIsActive(true)
+    }
 
 
 }
