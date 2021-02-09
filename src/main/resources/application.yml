@@ -9,3 +9,14 @@ spring:
     url: jdbc:mysql://localhost:3306/mercadolivro?useTimezone=true&serverTimezone=UTC&createDatabaseIfNotExist=true
     username: root
     password: root
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: email@gmail.com
+    password: umaSenhaAi
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

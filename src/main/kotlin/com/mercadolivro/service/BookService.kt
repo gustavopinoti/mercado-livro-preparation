@@ -1,47 +1,54 @@
 package com.mercadolivro.service
 
+import com.mercadolivro.events.event.SoldBookEvent
 import com.mercadolivro.exception.BadRequestException
 import com.mercadolivro.model.BookModel
 import com.mercadolivro.repository.BookRepository
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class BookService(
-    private val bookRepository: BookRepository
+    private val bookRepository: BookRepository,
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) {
+
+    fun findById(id: Int): BookModel =
+            bookRepository.findById(id)
+                    .orElseThrow { BadRequestException("Book [${id}] Not Exists") }
 
     fun create(book: BookModel) {
         bookRepository.save(book)
     }
 
-    fun findAll(): List<BookModel> {
-        return bookRepository.findAll().toList()
-    }
-
+    fun findAll(): List<BookModel> = bookRepository.findAll().toList()
 
     fun delete(id: Int) {
-        if(!bookRepository.existsById(id)) {
-            throw BadRequestException("Book [${id}] Not Exists")
-        }
+        val book = findById(id)
 
-        bookRepository.deleteById(id)
-    }
-
-    fun update(book: BookModel) {
-        val bookSaved = bookRepository.findById(book.id!!)
-
-        if (bookSaved.isEmpty) {
-            throw BadRequestException("Book [${book.id}] Not Exists")
-        }
-
-        book.customer = bookSaved.get().customer
+        book.isActive = false
 
         bookRepository.save(book)
     }
 
-    fun findActives(): List<BookModel> {
-        return bookRepository.findByIsActive(true)
+    fun update(book: BookModel) {
+        val bookSaved = findById(book.id!!)
+
+        book.customer = bookSaved.customer
+
+        bookRepository.save(book)
     }
 
+    fun findActives(): List<BookModel> =
+        bookRepository.findByIsActive(true)
+
+    fun purchase(book: BookModel) {
+        book.saleDate = LocalDateTime.now()
+
+        bookRepository.save(book)
+
+        applicationEventPublisher.publishEvent(SoldBookEvent(this, book))
+    }
 
 }

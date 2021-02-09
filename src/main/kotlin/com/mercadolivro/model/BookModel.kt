@@ -2,6 +2,7 @@ package com.mercadolivro.model
 
 import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.math.BigDecimal
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity(name = "book")
@@ -22,5 +23,8 @@ data class BookModel(
     var customer: CustomerModel? = null,
 
     @Column(name = "is_active")
-    var isActive: Boolean = true
+    var isActive: Boolean = true,
+
+    @Column(name = "sale_date")
+    var saleDate: LocalDateTime? = null
 )

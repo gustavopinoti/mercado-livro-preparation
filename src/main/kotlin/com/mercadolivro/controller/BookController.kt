@@ -2,6 +2,7 @@ package com.mercadolivro.controller
 
 import com.mercadolivro.controller.request.BookPostRequest
 import com.mercadolivro.controller.request.BookPutRequest
+import com.mercadolivro.controller.request.PurchasePostRequest
 import com.mercadolivro.extensions.toBookModel
 import com.mercadolivro.model.BookModel
 import com.mercadolivro.service.BookService
@@ -43,6 +44,14 @@ class BookController(val bookService: BookService, val customerService: Customer
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun update(@PathVariable("id") id: Int, @Valid @RequestBody book: BookPutRequest) {
         bookService.update(book.toBookModel(id))
+    }
+
+    @PostMapping("purchase")
+    @ResponseStatus(HttpStatus.OK)
+    fun purchase(@Valid @RequestBody purchase: PurchasePostRequest) {
+        //TODO pensei em colocar depois um obj muitos para muitos aqui. Por isso deixei recebendo o id do usuario
+        val book = bookService.findById(purchase.bookId)
+        bookService.purchase(book)
     }
 
 }

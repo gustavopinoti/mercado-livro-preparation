@@ -4,5 +4,6 @@ CREATE TABLE book (
     price decimal(13, 2) not null,
     customer_id int not null,
     is_active boolean not null default true,
+    sale_date DATETIME,
     FOREIGN KEY (customer_id) REFERENCES customer(id)
 );
