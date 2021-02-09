@@ -18,6 +18,7 @@ class BookService(
         return bookRepository.findAll().toList()
     }
 
+
     fun delete(id: Int) {
         if(!bookRepository.existsById(id)) {
             throw BadRequestException("Book [${id}] Not Exists")
@@ -27,10 +28,13 @@ class BookService(
     }
 
     fun update(book: BookModel) {
-        if(!bookRepository.existsById(book.id!!)) {
+        if (!bookRepository.existsById(book.id!!)) {
             throw BadRequestException("Book [${book.id}] Not Exists")
         }
 
         bookRepository.save(book)
     }
+
+
+
 }
