@@ -24,7 +24,7 @@ class JwtUtil {
                 .compact()
     }
 
-    fun isTokenValido(token: String): Boolean {
+    fun isValidToken(token: String): Boolean {
         val claims = getClaims(token)
         if (claims != null) {
             val username = claims.subject

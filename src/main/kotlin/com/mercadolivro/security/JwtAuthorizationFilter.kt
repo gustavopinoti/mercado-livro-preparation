@@ -30,7 +30,7 @@ class JwtAuthorizationFilter(
     }
 
     private fun getAuthentication(token: String): UsernamePasswordAuthenticationToken? {
-        if (jwtUtil.isTokenValido(token)) {
+        if (jwtUtil.isValidToken(token)) {
             val username: String = jwtUtil.getUsername(token)!!
             val user = userDetailService.loadUserByUsername(username)
             return UsernamePasswordAuthenticationToken(user, null, user.authorities)

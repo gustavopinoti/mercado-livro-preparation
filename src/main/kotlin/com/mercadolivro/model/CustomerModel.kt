@@ -6,7 +6,7 @@ import javax.persistence.*
 data class CustomerModel (
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
 
     @Column

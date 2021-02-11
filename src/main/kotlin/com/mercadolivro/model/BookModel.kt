@@ -1,6 +1,6 @@
 package com.mercadolivro.model
 
-import org.springframework.transaction.support.TransactionSynchronizationManager
+import com.mercadolivro.enums.BookStatus
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -9,7 +9,7 @@ import javax.persistence.*
 data class BookModel(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
 
     @Column
@@ -22,8 +22,8 @@ data class BookModel(
     @JoinColumn(name = "customer_id")
     var customer: CustomerModel? = null,
 
-    @Column(name = "is_active")
-    var isActive: Boolean = true,
+    @Column(name = "status")
+    var status: BookStatus? = null,
 
     @Column(name = "sale_date")
     var saleDate: LocalDateTime? = null

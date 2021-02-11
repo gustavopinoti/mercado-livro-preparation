@@ -1,5 +1,6 @@
 package com.mercadolivro.service
 
+import com.mercadolivro.enums.BookStatus
 import com.mercadolivro.events.event.SoldBookEvent
 import com.mercadolivro.exception.BadRequestException
 import com.mercadolivro.model.BookModel
@@ -27,7 +28,7 @@ class BookService(
     fun delete(id: Int) {
         val book = findById(id)
 
-        book.isActive = false
+        book.status = BookStatus.CANCELADO
 
         bookRepository.save(book)
     }
@@ -36,15 +37,17 @@ class BookService(
         val bookSaved = findById(book.id!!)
 
         book.customer = bookSaved.customer
+        book.status = bookSaved.status
 
         bookRepository.save(book)
     }
 
     fun findActives(): List<BookModel> =
-        bookRepository.findByIsActive(true)
+        bookRepository.findByStatus(BookStatus.ATIVO)
 
     fun purchase(book: BookModel) {
         book.saleDate = LocalDateTime.now()
+        book.status = BookStatus.VENDIDO
 
         bookRepository.save(book)
 
