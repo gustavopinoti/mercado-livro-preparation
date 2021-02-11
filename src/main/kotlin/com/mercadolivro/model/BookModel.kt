@@ -23,6 +23,7 @@ data class BookModel(
     var customer: CustomerModel? = null,
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     var status: BookStatus? = null,
 
     @Column(name = "sale_date")

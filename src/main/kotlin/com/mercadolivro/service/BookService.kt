@@ -51,7 +51,7 @@ class BookService(
 
         bookRepository.save(book)
 
-        applicationEventPublisher.publishEvent(SoldBookEvent(this, book))
+        applicationEventPublisher.publishEvent(SoldBookEvent(this, book, book.customer!!))
     }
 
 }

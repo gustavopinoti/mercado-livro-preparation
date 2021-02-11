@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
@@ -21,7 +21,6 @@ import kotlin.jvm.Throws
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-    private val userDetailsService: UserDetailsService,
     private val jwtUtil: JwtUtil
 ): WebSecurityConfigurerAdapter() {
 
@@ -33,8 +32,15 @@ class SecurityConfig(
 
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder) {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder())
+        auth.userDetailsService(userDetailsService()).passwordEncoder(bCryptPasswordEncoder())
     }
+
+    @Throws(java.lang.Exception::class)
+    override fun configure(web: WebSecurity) {
+        web.ignoring().antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**",
+                "/swagger-ui.html", "/webjars/**")
+    }
+
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
@@ -45,7 +51,7 @@ class SecurityConfig(
                 .antMatchers(HttpMethod.GET, *PUBLIC_MATCHERS_GET).permitAll()
                 .anyRequest().authenticated()
         http.addFilter(JwtAuthenticationFilter(authenticationManager(), jwtUtil))
-        http.addFilter(JwtAuthorizationFilter(authenticationManager(), userDetailsService, jwtUtil))
+        http.addFilter(JwtAuthorizationFilter(authenticationManager(), userDetailsService(), jwtUtil))
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     }
 
