@@ -1,0 +1,20 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mercadolivrotest?useTimezone=true&serverTimezone=UTC&createDatabaseIfNotExist=true
+    username: root
+    password: 123456
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: email@gmail.com
+    password: umaSenhaAi
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

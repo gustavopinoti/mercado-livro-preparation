@@ -1,9 +1,11 @@
 package com.mercadolivro.service
 
 import com.mercadolivro.exception.BadRequestException
+import com.mercadolivro.exception.NotFoundException
 import com.mercadolivro.model.CustomerModel
 import com.mercadolivro.repository.CustomerRepository
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class CustomerService(val customerRepository: CustomerRepository) {
@@ -35,6 +37,15 @@ class CustomerService(val customerRepository: CustomerRepository) {
 
     fun emailAvailable(email: String): Boolean {
         return !customerRepository.existsByEmail(email)
+    }
+
+    fun findById(customerId: Int): CustomerModel {
+        val customerOpt = customerRepository.findById(customerId)
+
+        if(customerOpt.isEmpty) {
+            throw NotFoundException("Customer [${customerId}] não encontrado")
+        }
+        return customerOpt.get()
     }
 
 }
