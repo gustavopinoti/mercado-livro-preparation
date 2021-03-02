@@ -24,7 +24,6 @@ import java.util.*
 @SpringBootTest
 class BookServiceTest {
 
-    //TODO Testes falhando
     @MockK
     private lateinit var bookRepository: BookRepository
 
@@ -76,7 +75,7 @@ class BookServiceTest {
     @Nested
     inner class WhenCallingCreate {
         @Test
-        fun `returns created book`() {
+        fun `call save method one time`() {
             val book = buildBook(null)
             val createdBook = buildBook(1)
             every { bookRepository.save(book) } returns createdBook
@@ -90,7 +89,7 @@ class BookServiceTest {
     @Nested
     inner class WhenCallingUpdate {
         @Test
-        fun `returns updated book`() {
+        fun `call save method one time`() {
             val bookId = 123
             val book = buildBook(bookId)
             val updatedBook = buildBook(bookId, name = "new name")
@@ -117,7 +116,7 @@ class BookServiceTest {
     }
 
     @Nested
-    inner class WhenCallingPurchase() {
+    inner class WhenCallingPurchase {
         @Test
         fun `changes the book status and send a event`() {
             val book = buildBook(123)
@@ -147,7 +146,7 @@ class BookServiceTest {
     private fun buildCustomer() =
         CustomerModel(
                 123,
-                "Some Custoemr",
+                "Some Customer",
                 "some@customer.com",
                 mutableSetOf(Profiles.CUSTOMER)
         )

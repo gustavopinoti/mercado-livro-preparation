@@ -39,13 +39,7 @@ class CustomerService(val customerRepository: CustomerRepository) {
         return !customerRepository.existsByEmail(email)
     }
 
-    fun findById(customerId: Int): CustomerModel {
-        val customerOpt = customerRepository.findById(customerId)
-
-        if(customerOpt.isEmpty) {
-            throw NotFoundException("Customer [${customerId}] não encontrado")
-        }
-        return customerOpt.get()
-    }
+    fun findById(customerId: Int): CustomerModel = customerRepository.findById(customerId)
+            .orElseThrow { NotFoundException("Customer [${customerId}] Not Exists") }
 
 }
