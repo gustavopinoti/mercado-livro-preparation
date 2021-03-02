@@ -81,9 +81,8 @@ class BookServiceTest {
             val createdBook = buildBook(1)
             every { bookRepository.save(book) } returns createdBook
 
-            val result = bookService.create(book)
+            bookService.create(book)
 
-            assertEquals(result, createdBook)
             verify(exactly = 1) { bookRepository.save(book) }
         }
     }
@@ -98,9 +97,8 @@ class BookServiceTest {
             every { bookRepository.save(book) } returns updatedBook
             every { bookRepository.findById(bookId) } returns Optional.of(updatedBook)
 
-            val result = bookService.update(book)
+            bookService.update(book)
 
-            assertEquals(result, updatedBook)
             verify(exactly = 1) { bookRepository.save(book) }
         }
     }
@@ -124,6 +122,9 @@ class BookServiceTest {
         fun `changes the book status and send a event`() {
             val book = buildBook(123)
             every { applicationEventPublisher.publishEvent(any()) } just runs
+            every { bookRepository.save(book) } returns book
+
+            bookService.purchase(book)
 
             assertAll(
                     { assertNotNull(book.saleDate) },
