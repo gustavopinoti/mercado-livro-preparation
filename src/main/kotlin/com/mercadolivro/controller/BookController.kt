@@ -7,6 +7,8 @@ import com.mercadolivro.extensions.toBookModel
 import com.mercadolivro.model.BookModel
 import com.mercadolivro.service.BookService
 import com.mercadolivro.service.CustomerService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -24,15 +26,17 @@ class BookController(val bookService: BookService, val customerService: Customer
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun findAll(): List<BookModel> {
-        return bookService.findAll()
+    fun findAll(pageable: Pageable): List<BookModel> {
+        return bookService.findAll(pageable)
     }
 
     @GetMapping("/active")
     @ResponseStatus(HttpStatus.OK)
-    fun findActives(): List<BookModel> {
-        return bookService.findActives()
-    }
+    fun findActives(@RequestParam(value="page", defaultValue="0") page: Int,
+                    @RequestParam(value="linesPerPage", defaultValue="24") size: Int,
+                    @RequestParam(value="orderBy", defaultValue="instante") orderBy: String,
+                    @RequestParam(value="direction", defaultValue="DESC") direction: String) =
+        bookService.findActives(page, size, orderBy, direction)
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
