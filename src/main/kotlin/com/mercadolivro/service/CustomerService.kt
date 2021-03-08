@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class CustomerService(val customerRepository: CustomerRepository) {
+class CustomerService(
+        val customerRepository: CustomerRepository,
+        val bookService: BookService) {
 
 
     fun create(customer: CustomerModel) {
@@ -20,10 +22,8 @@ class CustomerService(val customerRepository: CustomerRepository) {
     }
 
     fun delete(id: Int) {
-        if(!customerRepository.existsById(id)) {
-            throw BadRequestException("Customer [${id}] Not Exists")
-        }
-
+        val customer = findById(id)
+        bookService.deleteByCustomer(customer)
         customerRepository.deleteById(id)
     }
 

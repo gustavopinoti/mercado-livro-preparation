@@ -1,9 +1,12 @@
 package com.mercadolivro.service
 
+import com.mercadolivro.controller.request.BookPutRequest
 import com.mercadolivro.enums.BookStatus
 import com.mercadolivro.events.event.SoldBookEvent
 import com.mercadolivro.exception.BadRequestException
+import com.mercadolivro.extensions.toBookModel
 import com.mercadolivro.model.BookModel
+import com.mercadolivro.model.CustomerModel
 import com.mercadolivro.repository.BookRepository
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -33,17 +36,28 @@ class BookService(
         bookRepository.save(book)
     }
 
-    fun update(book: BookModel) {
-        val bookSaved = findById(book.id!!)
+    fun update(id: Int, bookPutRequest: BookPutRequest) {
+        val bookSaved = findById(id)
 
-        book.customer = bookSaved.customer
-        book.status = bookSaved.status
+        val book = bookPutRequest.toBookModel(bookSaved)
 
         bookRepository.save(book)
     }
 
     fun findActives(): List<BookModel> =
         bookRepository.findByStatus(BookStatus.ATIVO)
+
+    fun deleteByCustomer(customer: CustomerModel) {
+        val books = bookRepository.findByCustomer(customer)
+        for(book in books) {
+            book.deletedAt = LocalDateTime.now()
+            book.status = BookStatus.DELETADO
+        }
+//        books.forEach {
+//            it.deletedAt = LocalDateTime.now()
+//            it.status = BookStatus.DELETADO
+//        }
+    }
 
     fun purchase(book: BookModel) {
         book.saleDate = LocalDateTime.now()

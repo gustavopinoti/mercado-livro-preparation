@@ -43,7 +43,7 @@ class BookController(val bookService: BookService, val customerService: Customer
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun update(@PathVariable("id") id: Int, @Valid @RequestBody book: BookPutRequest) {
-        bookService.update(book.toBookModel(id))
+        bookService.update(id, book)
     }
 
     @PostMapping("purchase")

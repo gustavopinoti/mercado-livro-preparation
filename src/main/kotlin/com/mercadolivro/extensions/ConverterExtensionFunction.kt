@@ -32,10 +32,12 @@ fun BookPostRequest.toBookModel(customer: CustomerModel): BookModel {
     )
 }
 
-fun BookPutRequest.toBookModel(id: Int): BookModel {
+fun BookPutRequest.toBookModel(previousValue: BookModel): BookModel {
     return BookModel(
-        id = id,
-        name = this.name,
-        price = this.price
+        id = previousValue.id,
+        name = this.name ?: previousValue.name,
+        price = this.price ?: previousValue.price,
+        customer = previousValue.customer,
+        status = previousValue.status
     )
 }
