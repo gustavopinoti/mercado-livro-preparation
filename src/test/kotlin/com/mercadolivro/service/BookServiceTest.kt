@@ -16,9 +16,8 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.assertAll
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.data.domain.*
 import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.*
 
 @SpringBootTest
@@ -40,7 +39,7 @@ class BookServiceTest {
     inner class WhenCallingFindById {
         @Test
         fun `throws a error when has no book for id`() {
-            val bookId = 123
+            val bookId = Random().nextInt()
             every { bookRepository.findById(bookId) } returns Optional.empty()
 
             assertThrows(BadRequestException::class.java) {
@@ -50,7 +49,7 @@ class BookServiceTest {
 
         @Test
         fun `returns a book when has book for id`() {
-            val bookId = 123
+            val bookId = Random().nextInt()
             every { bookRepository.findById(bookId) } returns Optional.of(buildBook(bookId))
 
             val result = bookService.findById(bookId)
@@ -63,10 +62,12 @@ class BookServiceTest {
     inner class WhenCallingFindAll {
         @Test
         fun `returns all the books`() {
+            val pageable = PageRequest.of(0, 2)
             val books = listOf(buildBook(1), buildBook(2))
-            every { bookRepository.findAll() } returns books
+            val booksPage: Page<BookModel> = PageImpl(books)
+            every { bookRepository.findAll(pageable) } returns booksPage
 
-            val result = bookService.findAll()
+            val result = bookService.findAll(pageable)
 
             assertEquals(result, books)
         }
@@ -90,7 +91,7 @@ class BookServiceTest {
     inner class WhenCallingUpdate {
         @Test
         fun `call save method one time`() {
-            val bookId = 123
+            val bookId = Random().nextInt()
             val book = buildBook(bookId)
             val updatedBook = buildBook(bookId, name = "new name")
             every { bookRepository.save(book) } returns updatedBook
@@ -106,10 +107,16 @@ class BookServiceTest {
     inner class WhenCallingActive {
         @Test
         fun `returns all the active books`() {
+            val page = 0
+            val size = 12
+            val orderBy = "id"
+            val direction = "DESC"
+            val pageable: Pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), orderBy)
             val books = listOf(buildBook(1), buildBook(2))
-            every { bookRepository.findAll() } returns books
+            val booksPage: Page<BookModel> = PageImpl(books)
+            every { bookRepository.findByStatus(BookStatus.ATIVO, pageable) } returns booksPage
 
-            val result = bookService.findAll()
+            val result = bookService.findActives(page, size, orderBy, direction)
 
             assertEquals(result, books)
         }
@@ -126,7 +133,7 @@ class BookServiceTest {
             bookService.purchase(book)
 
             assertAll(
-                    { assertNotNull(book.saleDate) },
+                    { assertNotNull(book.soldAt) },
                     { assertNotNull(book.status) },
                     { verify(exactly = 1) { applicationEventPublisher.publishEvent(any()) } }
             )
@@ -139,8 +146,9 @@ class BookServiceTest {
                 name,
                 BigDecimal.TEN,
                 buildCustomer(),
-                bookStatus,
-                null
+                null,
+                null,
+                bookStatus
         )
 
     private fun buildCustomer() =

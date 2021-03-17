@@ -40,11 +40,7 @@ class BookService(
         bookRepository.save(book)
     }
 
-    fun update(id: Int, bookPutRequest: BookPutRequest) {
-        val bookSaved = findById(id)
-
-        val book = bookPutRequest.toBookModel(bookSaved)
-
+    fun update(book: BookModel) {
         bookRepository.save(book)
     }
 
@@ -66,7 +62,7 @@ class BookService(
     }
 
     fun purchase(book: BookModel) {
-        book.saleDate = LocalDateTime.now()
+        book.soldAt = LocalDateTime.now()
         book.status = BookStatus.VENDIDO
 
         bookRepository.save(book)

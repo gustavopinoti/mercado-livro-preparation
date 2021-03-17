@@ -23,8 +23,8 @@ data class BookModel(
     @JoinColumn(name = "customer_id")
     var customer: CustomerModel? = null,
 
-    @Column(name = "sale_date")
-    var saleDate: LocalDateTime? = null,
+    @Column(name = "sold_at")
+    var soldAt: LocalDateTime? = null,
 
     @Column(name = "deleted_date")
     var deletedAt: LocalDateTime? = null,
@@ -34,7 +34,7 @@ data class BookModel(
     @Enumerated(EnumType.STRING)
     var status: BookStatus? = null
         set(value) {
-            if(value == BookStatus.DELETADO || value == BookStatus.CANCELADO)
+            if(field == BookStatus.DELETADO || field == BookStatus.CANCELADO)
                 throw BadRequestException("Você nao pode atualizar um registro cancelado ou deletado")
             field = value
         }
@@ -50,9 +50,7 @@ data class BookModel(
     }
 
     init {
-        status = status?.let {
-            BookStatus.ATIVO
-        }
+        status = status ?: BookStatus.ATIVO
     }
 
 }

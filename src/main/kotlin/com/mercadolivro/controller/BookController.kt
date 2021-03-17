@@ -9,6 +9,7 @@ import com.mercadolivro.service.BookService
 import com.mercadolivro.service.CustomerService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -26,7 +27,7 @@ class BookController(val bookService: BookService, val customerService: Customer
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun findAll(pageable: Pageable): List<BookModel> {
+    fun findAll(@PageableDefault(page = 0, size = 12) pageable: Pageable): Page<BookModel> {
         return bookService.findAll(pageable)
     }
 
@@ -34,7 +35,7 @@ class BookController(val bookService: BookService, val customerService: Customer
     @ResponseStatus(HttpStatus.OK)
     fun findActives(@RequestParam(value="page", defaultValue="0") page: Int,
                     @RequestParam(value="linesPerPage", defaultValue="24") size: Int,
-                    @RequestParam(value="orderBy", defaultValue="instante") orderBy: String,
+                    @RequestParam(value="orderBy", defaultValue="id") orderBy: String,
                     @RequestParam(value="direction", defaultValue="DESC") direction: String) =
         bookService.findActives(page, size, orderBy, direction)
 
@@ -47,7 +48,9 @@ class BookController(val bookService: BookService, val customerService: Customer
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun update(@PathVariable("id") id: Int, @Valid @RequestBody book: BookPutRequest) {
-        bookService.update(id, book)
+        val bookSaved = bookService.findById(id)
+        val bookModel = book.toBookModel(bookSaved)
+        bookService.update(bookModel)
     }
 
     @PostMapping("purchase")
