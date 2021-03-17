@@ -52,11 +52,9 @@ class BookService(
     fun deleteByCustomer(customer: CustomerModel) {
         val books = bookRepository.findByCustomer(customer)
         for(book in books) {
-            book.deletedAt = LocalDateTime.now()
             book.status = BookStatus.DELETADO
         }
 //        books.forEach {
-//            it.deletedAt = LocalDateTime.now()
 //            it.status = BookStatus.DELETADO
 //        }
     }

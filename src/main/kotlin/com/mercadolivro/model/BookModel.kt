@@ -24,10 +24,7 @@ data class BookModel(
     var customer: CustomerModel? = null,
 
     @Column(name = "sold_at")
-    var soldAt: LocalDateTime? = null,
-
-    @Column(name = "deleted_date")
-    var deletedAt: LocalDateTime? = null,
+    var soldAt: LocalDateTime? = null
 ) {
 
     @Column(name = "status")
@@ -44,8 +41,7 @@ data class BookModel(
                 price: BigDecimal,
                 customer: CustomerModel? = null,
                 saleDate: LocalDateTime? = null,
-                deletedAt: LocalDateTime? = null,
-                status: BookStatus?): this(id, name, price, customer, saleDate, deletedAt) {
+                status: BookStatus?): this(id, name, price, customer, saleDate) {
         this.status = status
     }
 
