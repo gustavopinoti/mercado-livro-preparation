@@ -128,6 +128,8 @@ class BookServiceTest {
 
             assertEquals(result, booksPage)
 
+            verify(exactly = 1) { bookRepository.findByStatus(BookStatus.ATIVO, pageable) }
+
         }
     }
 
@@ -135,7 +137,7 @@ class BookServiceTest {
     inner class WhenCallingPurchase {
         @Test
         fun `changes the book status and send a event`() {
-            val book = buildBook(123)
+            val book = buildBook(Random().nextInt())
             every { applicationEventPublisher.publishEvent(any()) } just runs
             every { bookRepository.save(book) } returns book
 
