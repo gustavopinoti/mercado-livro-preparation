@@ -1,6 +1,7 @@
 package com.mercadolivro.model
 
 import com.mercadolivro.enums.BookStatus
+import com.mercadolivro.enums.Errors
 import com.mercadolivro.exception.BadRequestException
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -32,7 +33,7 @@ data class BookModel(
     var status: BookStatus? = null
         set(value) {
             if(field == BookStatus.DELETADO || field == BookStatus.CANCELADO)
-                throw BadRequestException("Você nao pode atualizar um registro cancelado ou deletado")
+                throw BadRequestException(Errors.ML2001.message, Errors.ML2001.code)
             field = value
         }
 
@@ -40,8 +41,8 @@ data class BookModel(
                 name: String,
                 price: BigDecimal,
                 customer: CustomerModel? = null,
-                saleDate: LocalDateTime? = null,
-                status: BookStatus?): this(id, name, price, customer, saleDate) {
+                soldAt: LocalDateTime? = null,
+                status: BookStatus?): this(id, name, price, customer, soldAt) {
         this.status = status
     }
 

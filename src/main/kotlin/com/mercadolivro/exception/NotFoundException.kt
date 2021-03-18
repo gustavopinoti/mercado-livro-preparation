@@ -1,9 +1,7 @@
 package com.mercadolivro.exception
 
-import org.springframework.http.HttpStatus
+import com.mercadolivro.enums.Errors
 
-class NotFoundException(override val message: String) : Exception(message) {
-
-    val code: Int = HttpStatus.NOT_FOUND.value()
+class NotFoundException(override val message: String, val errorCode: String) : Exception() {
 
 }

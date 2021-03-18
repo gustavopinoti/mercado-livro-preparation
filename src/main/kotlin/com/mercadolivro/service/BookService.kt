@@ -2,6 +2,7 @@ package com.mercadolivro.service
 
 import com.mercadolivro.controller.request.BookPutRequest
 import com.mercadolivro.enums.BookStatus
+import com.mercadolivro.enums.Errors
 import com.mercadolivro.events.event.SoldBookEvent
 import com.mercadolivro.exception.BadRequestException
 import com.mercadolivro.extensions.toBookModel
@@ -24,7 +25,7 @@ class BookService(
 
     fun findById(id: Int): BookModel =
             bookRepository.findById(id)
-                    .orElseThrow { BadRequestException("Book [${id}] Not Exists") }
+                    .orElseThrow { BadRequestException(Errors.ML2000.message.format(id), Errors.ML2000.code) }
 
     fun create(book: BookModel) {
         bookRepository.save(book)
