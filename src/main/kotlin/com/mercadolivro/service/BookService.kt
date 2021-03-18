@@ -55,6 +55,7 @@ class BookService(
         for(book in books) {
             book.status = BookStatus.DELETADO
         }
+        bookRepository.saveAll(books)
 //        books.forEach {
 //            it.status = BookStatus.DELETADO
 //        }
