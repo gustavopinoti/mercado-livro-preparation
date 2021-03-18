@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.domain.*
 import java.math.BigDecimal
 import java.util.*
+import kotlin.streams.toList
 
 @SpringBootTest
 class BookServiceTest {
@@ -50,11 +51,15 @@ class BookServiceTest {
         @Test
         fun `returns a book when has book for id`() {
             val bookId = Random().nextInt()
-            every { bookRepository.findById(bookId) } returns Optional.of(buildBook(bookId))
+            val book = buildBook(bookId)
+            every { bookRepository.findById(bookId) } returns Optional.of(book)
 
             val result = bookService.findById(bookId)
 
-            assertEquals(result, buildBook(bookId))
+            assertEquals(result, book)
+
+            verify(exactly = 1) { bookRepository.findById(bookId) }
+
         }
     }
 
@@ -69,7 +74,10 @@ class BookServiceTest {
 
             val result = bookService.findAll(pageable)
 
-            assertEquals(result, books)
+            assertEquals(result, booksPage)
+
+            verify(exactly = 1) { bookRepository.findAll(pageable) }
+
         }
     }
 
@@ -118,7 +126,8 @@ class BookServiceTest {
 
             val result = bookService.findActives(page, size, orderBy, direction)
 
-            assertEquals(result, books)
+            assertEquals(result, booksPage)
+
         }
     }
 
@@ -143,17 +152,16 @@ class BookServiceTest {
     private fun buildBook(bookId: Int?, name: String = "Example book", bookStatus: BookStatus = BookStatus.ATIVO) =
         BookModel(
             bookId,
-                name,
-                BigDecimal.TEN,
-                buildCustomer(),
-                null,
-                null,
-                bookStatus
+            name,
+            BigDecimal.TEN,
+            buildCustomer(),
+            null,
+            bookStatus
         )
 
     private fun buildCustomer() =
         CustomerModel(
-                123,
+                Random().nextInt(),
                 "Some Customer",
                 "some@customer.com",
                 mutableSetOf(Profiles.CUSTOMER)
