@@ -51,7 +51,7 @@ class BookService(
     }
 
     fun deleteByCustomer(customer: CustomerModel) {
-        val books = bookRepository.findByCustomer(customer)
+        val books = bookRepository.findByCustomerAndStatusIn(customer, listOf(BookStatus.ATIVO, BookStatus.CANCELADO))
         for(book in books) {
             book.status = BookStatus.DELETADO
         }

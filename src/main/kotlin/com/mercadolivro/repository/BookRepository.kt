@@ -11,4 +11,5 @@ interface BookRepository: CrudRepository<BookModel, Int> {
     fun findByStatus(ativo: BookStatus, pageable: Pageable): Page<BookModel>
     fun findByCustomer(customerModel: CustomerModel): List<BookModel>
     fun findAll(pageable: Pageable): Page<BookModel> //existe no jpa repository
+    fun findByCustomerAndStatusIn(customer: CustomerModel, status: List<BookStatus>): List<BookModel>
 }

@@ -7,21 +7,25 @@ import com.mercadolivro.controller.request.CustomerPutRequest
 import com.mercadolivro.controller.response.BookResponse
 import com.mercadolivro.controller.response.CustomerResponse
 import com.mercadolivro.enums.BookStatus
+import com.mercadolivro.enums.CustomerStatus
 import com.mercadolivro.model.BookModel
 import com.mercadolivro.model.CustomerModel
 
 fun CustomerPostRequest.toCustomerModel(): CustomerModel {
     return CustomerModel(
         name = this.name!!,
-        email = this.email!!
+        email = this.email!!,
+        status = CustomerStatus.ATIVO
     )
 }
 
-fun CustomerPutRequest.toCustomerModel(id:Int): CustomerModel {
+fun CustomerPutRequest.toCustomerModel(previousValue: CustomerModel): CustomerModel {
     return CustomerModel(
-        id = id,
+        id = previousValue.id,
         name = this.name!!,
-        email = this.email!!
+        email = this.email!!,
+        status = previousValue.status,
+        roles = previousValue.roles
     )
 }
 
