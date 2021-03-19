@@ -1,5 +1,7 @@
 package com.mercadolivro.service
 
+import com.mercadolivro.enums.CustomerStatus
+import com.mercadolivro.enums.Errors
 import com.mercadolivro.exception.BadRequestException
 import com.mercadolivro.exception.NotFoundException
 import com.mercadolivro.model.CustomerModel
@@ -8,7 +10,9 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class CustomerService(val customerRepository: CustomerRepository) {
+class CustomerService(
+        val customerRepository: CustomerRepository,
+        val bookService: BookService) {
 
 
     fun create(customer: CustomerModel) {
@@ -20,16 +24,17 @@ class CustomerService(val customerRepository: CustomerRepository) {
     }
 
     fun delete(id: Int) {
-        if(!customerRepository.existsById(id)) {
-            throw BadRequestException("Customer [${id}] Not Exists")
-        }
+        val customer = findById(id)
+        bookService.deleteByCustomer(customer)
 
-        customerRepository.deleteById(id)
+        customer.status = CustomerStatus.INATIVO
+
+        customerRepository.save(customer)
     }
 
     fun update(customer: CustomerModel) {
         if(!customerRepository.existsById(customer.id!!)) {
-            throw BadRequestException("Customer [${customer.id}] Not Exists")
+            throw BadRequestException(Errors.ML1001.message.format(customer.id), Errors.ML1001.code)
         }
 
         customerRepository.save(customer)
@@ -39,13 +44,7 @@ class CustomerService(val customerRepository: CustomerRepository) {
         return !customerRepository.existsByEmail(email)
     }
 
-    fun findById(customerId: Int): CustomerModel {
-        val customerOpt = customerRepository.findById(customerId)
-
-        if(customerOpt.isEmpty) {
-            throw NotFoundException("Customer [${customerId}] não encontrado")
-        }
-        return customerOpt.get()
-    }
+    fun findById(customerId: Int): CustomerModel = customerRepository.findById(customerId)
+            .orElseThrow { NotFoundException(Errors.ML1001.message.format(customerId), Errors.ML1001.code) }
 
 }

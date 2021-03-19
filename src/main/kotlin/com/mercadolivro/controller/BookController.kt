@@ -3,10 +3,14 @@ package com.mercadolivro.controller
 import com.mercadolivro.controller.request.BookPostRequest
 import com.mercadolivro.controller.request.BookPutRequest
 import com.mercadolivro.controller.request.PurchasePostRequest
+import com.mercadolivro.controller.response.BookResponse
 import com.mercadolivro.extensions.toBookModel
-import com.mercadolivro.model.BookModel
+import com.mercadolivro.extensions.toBookResponse
 import com.mercadolivro.service.BookService
 import com.mercadolivro.service.CustomerService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
@@ -24,15 +28,22 @@ class BookController(val bookService: BookService, val customerService: Customer
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun findAll(): List<BookModel> {
-        return bookService.findAll()
+    fun findAll(@PageableDefault(page = 0, size = 12) pageable: Pageable): Page<BookResponse> {
+        return bookService.findAll(pageable).map { it.toBookResponse() }
+    }
+
+    @GetMapping("/{id}")
+    fun findById(@PathVariable id: Int): BookResponse {
+        return bookService.findById(id).toBookResponse()
     }
 
     @GetMapping("/active")
     @ResponseStatus(HttpStatus.OK)
-    fun findActives(): List<BookModel> {
-        return bookService.findActives()
-    }
+    fun findActives(@RequestParam(value="page", defaultValue="0") page: Int,
+                    @RequestParam(value="linesPerPage", defaultValue="24") size: Int,
+                    @RequestParam(value="orderBy", defaultValue="id") orderBy: String,
+                    @RequestParam(value="direction", defaultValue="DESC") direction: String) =
+        bookService.findActives(page, size, orderBy, direction)
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -43,7 +54,9 @@ class BookController(val bookService: BookService, val customerService: Customer
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun update(@PathVariable("id") id: Int, @Valid @RequestBody book: BookPutRequest) {
-        bookService.update(book.toBookModel(id))
+        val bookSaved = bookService.findById(id)
+        val bookModel = book.toBookModel(bookSaved)
+        bookService.update(bookModel)
     }
 
     @PostMapping("purchase")

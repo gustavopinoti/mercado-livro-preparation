@@ -1,5 +1,6 @@
 package com.mercadolivro.model
 
+import com.mercadolivro.enums.CustomerStatus
 import com.mercadolivro.enums.Profiles
 import javax.persistence.*
 
@@ -15,6 +16,9 @@ data class CustomerModel (
 
     @Column
     var email: String,
+
+    @Column
+    var status: CustomerStatus,
 
     @ElementCollection(targetClass = Profiles::class)
     @Enumerated(EnumType.STRING)
