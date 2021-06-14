@@ -2,11 +2,11 @@ package com.mercadolivro.events.event
 
 import com.mercadolivro.model.BookModel
 import com.mercadolivro.model.CustomerModel
+import com.mercadolivro.model.PurchaseModel
 import org.springframework.context.ApplicationEvent
 import java.time.LocalDateTime
 
-class SoldBookEvent(
+class PurchaseEvent(
     source: Any,
-    val book: BookModel,
-    val customerModel: CustomerModel
+    val purchaseModel: PurchaseModel
 ): ApplicationEvent(source)
