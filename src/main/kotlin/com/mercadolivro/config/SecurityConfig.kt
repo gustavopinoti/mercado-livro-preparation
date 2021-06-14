@@ -49,7 +49,7 @@ class SecurityConfig(
                 .antMatchers(*PUBLIC_MATCHERS).permitAll()
                 .antMatchers(HttpMethod.POST, *PUBLIC_MATCHERS_POST).permitAll()
                 .antMatchers(HttpMethod.GET, *PUBLIC_MATCHERS_GET).permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
         http.addFilter(JwtAuthenticationFilter(authenticationManager(), jwtUtil))
         http.addFilter(JwtAuthorizationFilter(authenticationManager(), userDetailsService(), jwtUtil))
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

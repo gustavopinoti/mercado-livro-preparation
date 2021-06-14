@@ -1,11 +1,8 @@
 package com.mercadolivro.service
 
-import com.mercadolivro.controller.request.BookPutRequest
 import com.mercadolivro.enums.BookStatus
 import com.mercadolivro.enums.Errors
-import com.mercadolivro.events.event.SoldBookEvent
 import com.mercadolivro.exception.BadRequestException
-import com.mercadolivro.extensions.toBookModel
 import com.mercadolivro.model.BookModel
 import com.mercadolivro.model.CustomerModel
 import com.mercadolivro.repository.BookRepository
@@ -15,7 +12,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
 
 @Service
 class BookService(
@@ -61,13 +57,25 @@ class BookService(
 //        }
     }
 
-    fun purchase(book: BookModel) {
-        book.soldAt = LocalDateTime.now()
-        book.status = BookStatus.VENDIDO
+//    fun purchase(book: BookModel) =
+//        book.apply {
+//            soldAt = LocalDateTime.now()
+//            status = BookStatus.VENDIDO
+//        }
+//            .let(bookRepository::save)
+//            .also {
+//                applicationEventPublisher.publishEvent(SoldBookEvent(this, it, it.customer!!))
+//            }
 
-        bookRepository.save(book)
+    fun findAllByIds(bookIds: Set<Int>): List<BookModel> {
+        return bookRepository.findAllById(bookIds).toList()
+    }
 
-        applicationEventPublisher.publishEvent(SoldBookEvent(this, book, book.customer!!))
+    fun purchase(books: List<BookModel>) {
+        books.map {
+            it.status = BookStatus.VENDIDO
+        }
+        bookRepository.saveAll(books)
     }
 
 }

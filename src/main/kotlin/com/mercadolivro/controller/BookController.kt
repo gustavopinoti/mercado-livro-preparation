@@ -59,12 +59,4 @@ class BookController(val bookService: BookService, val customerService: Customer
         bookService.update(bookModel)
     }
 
-    @PostMapping("purchase")
-    @ResponseStatus(HttpStatus.OK)
-    fun purchase(@Valid @RequestBody purchase: PurchasePostRequest) {
-        //TODO pensei em colocar depois um obj muitos para muitos aqui. Por isso deixei recebendo o id do usuario
-        val book = bookService.findById(purchase.bookId)
-        bookService.purchase(book)
-    }
-
 }
