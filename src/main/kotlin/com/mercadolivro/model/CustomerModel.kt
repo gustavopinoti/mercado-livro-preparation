@@ -20,7 +20,12 @@ data class CustomerModel (
     @Column
     var status: CustomerStatus,
 
-    @ElementCollection(targetClass = Profiles::class)
+    @Column
+    val password: String,
+
+    @CollectionTable(name = "customer_roles", joinColumns = [JoinColumn(name = "customer_id")])
+    @ElementCollection(targetClass = Profiles::class, fetch = FetchType.EAGER)
+    @Column(name="role")
     @Enumerated(EnumType.STRING)
-    var roles: MutableSet<Profiles> = mutableSetOf()
+    var roles: Set<Profiles> = setOf()
 )
