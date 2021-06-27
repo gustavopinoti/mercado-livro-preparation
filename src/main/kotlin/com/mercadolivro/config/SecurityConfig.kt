@@ -27,7 +27,8 @@ import kotlin.jvm.Throws
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfig(
     private val jwtUtil: JwtUtil,
-    private val userDetailsService: UserDetailsService
+    private val userDetailsService: UserDetailsService,
+    private val customerRepository: CustomerRepository
 ): WebSecurityConfigurerAdapter() {
 
     private val PUBLIC_MATCHERS = arrayOf<String>()
@@ -59,7 +60,7 @@ class SecurityConfig(
                 .antMatchers(HttpMethod.GET, *PUBLIC_MATCHERS_GET).permitAll()
                 .antMatchers("adminRequests").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
-        http.addFilter(JwtAuthenticationFilter(authenticationManager(), jwtUtil))
+        http.addFilter(JwtAuthenticationFilter(authenticationManager(), customerRepository, jwtUtil))
         http.addFilter(JwtAuthorizationFilter(authenticationManager(), userDetailsService(), jwtUtil))
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     }

@@ -13,8 +13,8 @@ class UserDetailsServiceImp(
     private val repo: CustomerRepository
 ): UserDetailsService {
     @Throws(UsernameNotFoundException::class)
-    override fun loadUserByUsername(email: String): UserDetails {
-        val user = repo.findByEmail(email).orElseThrow { UsernameNotFoundException(email) }
+    override fun loadUserByUsername(id: String): UserDetails {
+        val user = repo.findById(id.toInt()).orElseThrow { UsernameNotFoundException(id) }
         return UserSecurity(user)
     }
 }

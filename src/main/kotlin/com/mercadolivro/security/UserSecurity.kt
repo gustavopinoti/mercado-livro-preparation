@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails
 class UserSecurity(private val user: CustomerModel) : UserDetails {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = user.roles.map { SimpleGrantedAuthority(it.description) }.toMutableList()
     override fun isEnabled(): Boolean = true
-    override fun getUsername(): String = user.email
+    override fun getUsername(): String = user.id.toString()
     override fun isCredentialsNonExpired(): Boolean = true
     override fun getPassword(): String = user.password
     override fun isAccountNonExpired(): Boolean = true

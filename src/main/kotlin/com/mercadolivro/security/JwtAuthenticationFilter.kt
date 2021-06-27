@@ -2,6 +2,7 @@ package com.mercadolivro.security
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.mercadolivro.controller.request.CredentialRequest
+import com.mercadolivro.repository.CustomerRepository
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
@@ -17,6 +18,7 @@ import kotlin.jvm.Throws
 
 class JwtAuthenticationFilter(
         authenticationManager: AuthenticationManager,
+        private val customerRepository: CustomerRepository,
         private val jwtUtil: JwtUtil
 ) : UsernamePasswordAuthenticationFilter(authenticationManager) {
 
@@ -24,7 +26,8 @@ class JwtAuthenticationFilter(
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
         return try {
             val credential = ObjectMapper().readValue(request.inputStream, CredentialRequest::class.java)
-            val authToken = UsernamePasswordAuthenticationToken(credential.email, credential.password, ArrayList())
+            val id = customerRepository.findByEmail(credential.email!!).orElse(null)?.id
+            val authToken = UsernamePasswordAuthenticationToken(id, credential.password, ArrayList())
             authenticationManager.authenticate(authToken)
         } catch (e: IOException) {
             throw RuntimeException(e)
