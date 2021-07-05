@@ -5,8 +5,10 @@ import com.mercadolivro.controller.request.CustomerPutRequest
 import com.mercadolivro.controller.response.CustomerResponse
 import com.mercadolivro.extensions.toCustomerModel
 import com.mercadolivro.extensions.toCustomerResponse
+import com.mercadolivro.security.UserAccessingTheirOwnResource
 import com.mercadolivro.service.CustomerService
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -27,6 +29,7 @@ class CustomerController(val customerService: CustomerService) {
     }
 
     @GetMapping("/{id}")
+    @UserAccessingTheirOwnResource
     fun findById(@PathVariable id: Int): CustomerResponse {
         return customerService.findById(id).toCustomerResponse()
     }

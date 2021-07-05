@@ -7,7 +7,7 @@ spring:
     default-property-inclusion: non_null
 jwt:
   secret: FHKASDFLÇASDBFHKLASDGVUISDYAIOFHDSAJFBASDMFNSDAKSDIOFHAFKASDHFJKAHFJHASDIPOFUASDO
-  expiration: 36000
+  expiration: 99999999999
 
 logging:
   level:

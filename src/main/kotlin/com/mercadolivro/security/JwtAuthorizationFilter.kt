@@ -1,5 +1,6 @@
 package com.mercadolivro.security
 
+import com.mercadolivro.exception.AuthenticationException
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -22,14 +23,12 @@ class JwtAuthorizationFilter(
         val header = request.getHeader("Authorization")
         if (header != null && header.startsWith("Bearer ")) {
             val auth = getAuthentication(header.substring(7))
-            if (auth != null) {
-                SecurityContextHolder.getContext().authentication = auth
-            }
+            SecurityContextHolder.getContext().authentication = auth
         }
         chain.doFilter(request, response)
     }
 
-    private fun getAuthentication(token: String): UsernamePasswordAuthenticationToken? {
+    private fun getAuthentication(token: String): UsernamePasswordAuthenticationToken {
         if (!jwtUtil.isValidToken(token)) {
             return null
         }

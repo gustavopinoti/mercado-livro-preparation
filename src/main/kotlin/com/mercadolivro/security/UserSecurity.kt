@@ -6,6 +6,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class UserSecurity(private val user: CustomerModel) : UserDetails {
+    val id = user.id
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> = user.roles.map { SimpleGrantedAuthority(it.description) }.toMutableList()
     override fun isEnabled(): Boolean = true
     override fun getUsername(): String = user.id.toString()

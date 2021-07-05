@@ -1,5 +1,6 @@
 package com.mercadolivro.config
 
+import com.mercadolivro.enums.Profiles
 import com.mercadolivro.repository.CustomerRepository
 import com.mercadolivro.security.JwtAuthenticationFilter
 import com.mercadolivro.security.JwtAuthorizationFilter
@@ -58,7 +59,7 @@ class SecurityConfig(
                 .antMatchers(*PUBLIC_MATCHERS).permitAll()
                 .antMatchers(HttpMethod.POST, *PUBLIC_MATCHERS_POST).permitAll()
                 .antMatchers(HttpMethod.GET, *PUBLIC_MATCHERS_GET).permitAll()
-                .antMatchers("adminRequests").hasAuthority("ROLE_ADMIN")
+                .antMatchers(*ADMIN_MATCHERS).hasAuthority(Profiles.ADMIN.description)
                 .anyRequest().authenticated()
         http.addFilter(JwtAuthenticationFilter(authenticationManager(), customerRepository, jwtUtil))
         http.addFilter(JwtAuthorizationFilter(authenticationManager(), userDetailsService(), jwtUtil))
