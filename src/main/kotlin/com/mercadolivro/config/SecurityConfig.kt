@@ -34,11 +34,15 @@ class SecurityConfig(
 
     private val PUBLIC_MATCHERS = arrayOf<String>()
 
-    private val PUBLIC_MATCHERS_POST = arrayOf<String>(
+    private val PUBLIC_MATCHERS_POST = arrayOf(
             "/customer"
     )
 
     private val PUBLIC_MATCHERS_GET = arrayOf<String>()
+
+    private val ADMIN_MATCHERS = arrayOf(
+            "/admin/**"
+    )
 
     @Throws(Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder) {

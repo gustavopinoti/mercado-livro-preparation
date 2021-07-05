@@ -12,6 +12,8 @@ import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import kotlin.jvm.Throws
+import com.mercadolivro.enums.Errors.ML0001
+
 
 class JwtAuthorizationFilter(
         authenticationManager: AuthenticationManager,
@@ -30,7 +32,7 @@ class JwtAuthorizationFilter(
 
     private fun getAuthentication(token: String): UsernamePasswordAuthenticationToken {
         if (!jwtUtil.isValidToken(token)) {
-            return null
+            throw AuthenticationException(ML0001.message, ML0001.code)
         }
         val username: String = jwtUtil.getUsername(token)!!
         val user = userDetailService.loadUserByUsername(username)

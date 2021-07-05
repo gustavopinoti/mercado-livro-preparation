@@ -33,6 +33,16 @@ class ControllerAdvice {
         return ResponseEntity(errorDetails, HttpStatus.NOT_FOUND)
     }
 
+    @ExceptionHandler(AuthenticationException::class)
+    fun handleAuthenticationException(ex: AuthenticationException, request: WebRequest): ResponseEntity<ErrorResponse> {
+        val errorDetails = ErrorResponse(
+                httpCode = HttpStatus.FORBIDDEN.value(),
+                message = ex.message,
+                internalCode = ex.errorCode
+        )
+        return ResponseEntity(errorDetails, HttpStatus.FORBIDDEN)
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleMethodArgumentNotValidException(ex: MethodArgumentNotValidException, request: WebRequest?): ResponseEntity<ErrorResponse> {
         val errorDetails = ErrorResponse(
