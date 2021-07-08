@@ -2,6 +2,7 @@ package com.mercadolivro.enums
 
 enum class Errors(val code: String, val message: String ) {
 
+    ML0001("ML-0001", "Invalid Token"),
     ML1001("ML-1001", "Customer [%s] Not Exists"),
     ML1002("ML-1002", ""),
 

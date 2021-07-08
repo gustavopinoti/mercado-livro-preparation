@@ -1,5 +1,6 @@
 package com.mercadolivro.security
 
+import com.mercadolivro.exception.AuthenticationException
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -11,6 +12,8 @@ import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import kotlin.jvm.Throws
+import com.mercadolivro.enums.Errors.ML0001
+
 
 class JwtAuthorizationFilter(
         authenticationManager: AuthenticationManager,
@@ -22,20 +25,18 @@ class JwtAuthorizationFilter(
         val header = request.getHeader("Authorization")
         if (header != null && header.startsWith("Bearer ")) {
             val auth = getAuthentication(header.substring(7))
-            if (auth != null) {
-                SecurityContextHolder.getContext().authentication = auth
-            }
+            SecurityContextHolder.getContext().authentication = auth
         }
         chain.doFilter(request, response)
     }
 
-    private fun getAuthentication(token: String): UsernamePasswordAuthenticationToken? {
-        if (jwtUtil.isValidToken(token)) {
-            val username: String = jwtUtil.getUsername(token)!!
-            val user = userDetailService.loadUserByUsername(username)
-            return UsernamePasswordAuthenticationToken(user, null, user.authorities)
+    private fun getAuthentication(token: String): UsernamePasswordAuthenticationToken {
+        if (!jwtUtil.isValidToken(token)) {
+            throw AuthenticationException(ML0001.message, ML0001.code)
         }
-        return null
+        val username: String = jwtUtil.getUsername(token)!!
+        val user = userDetailService.loadUserByUsername(username)
+        return UsernamePasswordAuthenticationToken(user, null, user.authorities)
     }
 
 }

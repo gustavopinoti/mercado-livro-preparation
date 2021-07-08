@@ -1,8 +1,20 @@
 spring:
+  jpa:
+    show-sql: true
   profiles:
     active: test
   jackson:
     default-property-inclusion: non_null
 jwt:
   secret: FHKASDFLÇASDBFHKLASDGVUISDYAIOFHDSAJFBASDMFNSDAKSDIOFHAFKASDHFJKAHFJHASDIPOFUASDO
-  expiration: 36000
+  expiration: 99999999999
+
+logging:
+  level:
+    org:
+    hibernate:
+      SQL: DEBUG
+      type:
+        descriptor:
+          sql:
+            BasicBinder: TRACE

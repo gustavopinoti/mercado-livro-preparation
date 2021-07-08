@@ -25,7 +25,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-mail")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.flywaydb:flyway-core")
-	implementation("io.jsonwebtoken:jjwt:0.7.0")
+//	implementation("io.jsonwebtoken:jjwt:0.7.0")
+	implementation("io.jsonwebtoken:jjwt:0.9.1")
+
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 

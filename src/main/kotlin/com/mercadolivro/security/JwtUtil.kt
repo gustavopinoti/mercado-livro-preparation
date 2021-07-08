@@ -16,7 +16,7 @@ class JwtUtil {
     @Value("\${jwt.expiration}")
     private val expiration: Long? = null
 
-    fun generateToken(username: String?): String? {
+    fun generateToken(username: String?): String {
         return Jwts.builder()
                 .setSubject(username)
                 .setExpiration(Date(System.currentTimeMillis() + expiration!!))
@@ -26,27 +26,25 @@ class JwtUtil {
 
     fun isValidToken(token: String): Boolean {
         val claims = getClaims(token)
-        if (claims != null) {
-            val username = claims.subject
-            val expirationDate = claims.expiration
-            val now = Date(System.currentTimeMillis())
-            if (username != null && expirationDate != null && now.before(expirationDate)) {
-                return true
-            }
+        val username = claims.subject
+        val expirationDate = claims.expiration
+        val now = Date(System.currentTimeMillis())
+        if (username == null || expirationDate == null || now.after(expirationDate)) {
+            return false
         }
-        return false
+        return true
     }
 
-    private fun getClaims(token: String): Claims? {
+    private fun getClaims(token: String): Claims {
         return try {
             Jwts.parser().setSigningKey(secret!!.toByteArray()).parseClaimsJws(token).body
         } catch (e: Exception) {
-            null
+            throw Error("Can not get claims from token") //TODO criar um erro para esse cenario
         }
     }
 
     fun getUsername(token: String): String? {
         val claims = getClaims(token)
-        return claims?.subject
+        return claims.subject
     }
 }
