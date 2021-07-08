@@ -1,10 +1,13 @@
 package com.mercadolivro.config
 
 import com.mercadolivro.enums.Profiles
+import com.mercadolivro.exception.RestAccessDeniedHandler
+import com.mercadolivro.exception.RestAuthenticationEntryPoint
 import com.mercadolivro.repository.CustomerRepository
 import com.mercadolivro.security.JwtAuthenticationFilter
 import com.mercadolivro.security.JwtAuthorizationFilter
 import com.mercadolivro.security.JwtUtil
+import com.mercadolivro.service.UserDetailsServiceImp
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -26,8 +29,10 @@ import org.springframework.web.filter.CorsFilter
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class SecurityConfig(
     private val jwtUtil: JwtUtil,
-    private val userDetailsService: UserDetailsService,
-    private val customerRepository: CustomerRepository
+    private val userDetailsService: UserDetailsServiceImp,
+    private val customerRepository: CustomerRepository,
+    private val entryPoint: RestAuthenticationEntryPoint,
+    private val deniedHandler: RestAccessDeniedHandler
 ): WebSecurityConfigurerAdapter() {
 
     private val PUBLIC_MATCHERS = arrayOf<String>()
@@ -64,8 +69,10 @@ class SecurityConfig(
                 .antMatchers(*ADMIN_MATCHERS).hasAuthority(Profiles.ADMIN.description)
                 .anyRequest().authenticated()
         http.addFilter(JwtAuthenticationFilter(authenticationManager(), customerRepository, jwtUtil))
-        http.addFilter(JwtAuthorizationFilter(authenticationManager(), userDetailsService(), jwtUtil))
+        http.addFilter(JwtAuthorizationFilter(authenticationManager(), userDetailsService, jwtUtil))
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.exceptionHandling().accessDeniedHandler(deniedHandler).authenticationEntryPoint(entryPoint);
+
     }
 
     @Bean
